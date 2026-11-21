@@ -11,10 +11,15 @@ from PIL import Image
 LIMIT = 1_048_576
 
 
+def fit_within_box(img, box=(1024, 1024)):
+    # Shrink in place (never enlarge) so the image fits inside the box.
+    img.thumbnail(box, Image.LANCZOS)
+    return img
+
+
 def main():
     src = Path(__file__).resolve().parent / "passport.png"
-    img = Image.open(src).convert("RGB")
-    img.thumbnail((1024, 1024), Image.LANCZOS)
+    img = fit_within_box(Image.open(src).convert("RGB"))
     os.makedirs("/output", exist_ok=True)
     out = Path("/output/entry.png")
     buf = io.BytesIO()
